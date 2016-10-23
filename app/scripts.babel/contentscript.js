@@ -37,12 +37,20 @@ listItems.forEach((el) => {
       return;
     }
     imgContainerEl.setAttribute('data-images', true); //prevent multiple
+    imgEl.onclick = (e) => {e.preventDefault(); return false;}
 
     viewAd(info['ad_listid'], (xhr) => {
       const responseJson = JSON.parse(xhr.responseText);
-      const images = responseJson['images'];
+      const images = responseJson['images'].map((url)=>(url.replace('ad-image', 'ad-thumb')));
       imgContainerEl.setAttribute('data-images', images); // FYI, not used in code
 
+      imgEl.onclick = (e) => {
+        e.preventDefault();
+        const index = images.indexOf(imgEl.src);
+        imgEl.src = images[(index+1)%images.length];
+        return false;
+      };
+      /*
       const leftElement = document.createElement('i')
       leftElement.className = 'icon-chevron-left icon-3x small-hidden tiny-hidden';
       leftElement.onclick = (e) => {
@@ -65,6 +73,7 @@ listItems.forEach((el) => {
 
       imgEl.parentNode.insertBefore(leftElement, imgEl);
       imgEl.parentNode.insertBefore(rightElement, imgEl.nextSibling);
+      */
     })
   }
 })
